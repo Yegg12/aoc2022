@@ -1,8 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#define _CRT_SECURE_NO_WARNINGS
+//#define TEST
 #define FINAL
+
+//#define CHAL2
 
 typedef struct {
     int min;
@@ -12,7 +16,7 @@ typedef struct {
 int insideRange(range rangeA, range rangeB) {
     if(rangeA.min <= rangeB.min && rangeA.max >= rangeB.max 
     || rangeA.min >= rangeB.min && rangeA.max <= rangeB.max
-    #ifdef TEST2
+    #ifdef CHAL2
     || rangeA.min <= rangeB.min && rangeA.max >= rangeB.min
     || rangeA.min <= rangeB.max && rangeA.max >= rangeB.max
     #endif
@@ -20,6 +24,24 @@ int insideRange(range rangeA, range rangeB) {
         return 1;
     }
     else return 0;
+}
+
+int findNum(FILE *fp) {
+    int a = 0;
+    int c;
+
+    while(1) {
+        c = fgetc(fp);
+        if( c != '-' && 
+            c != ',' && 
+            c != '\n' && 
+            c != EOF) {
+        a *= 10;
+        a += c - '0';
+        } else break;
+    }
+
+    return a;
 }
 
 int main() {
@@ -45,42 +67,13 @@ int main() {
     rangeB.min = 0, rangeB.max = 0;
 
     while(c != EOF) {
-        c = 0;
+        rangeA.min = findNum(fp);
+        rangeA.max = findNum(fp);
 
-        while(c != '-') {
-            c = fgetc(fp);
-            if(c != '-') {
-            rangeA.min *= 10;
-            rangeA.min += c - '0';
-            }
-        }
-        c = 0;
+        rangeB.min = findNum(fp);
+        rangeB.max = findNum(fp);
 
-        while(c != ',') {
-            c = fgetc(fp);
-            if(c != ',') {
-            rangeA.max *= 10;
-            rangeA.max += c - '0';
-            }
-        }
-        c = 0;
-
-        while(c != '-') {
-            c = fgetc(fp);
-            if(c != '-') {
-            rangeB.min *= 10;
-            rangeB.min += c - '0';
-            }
-        }
-        c = 0;
-
-        while(c != '\n' && c != EOF) {
-            c = fgetc(fp);
-            if(c != '\n' && c != EOF) {
-            rangeB.max *= 10;
-            rangeB.max += c - '0';
-            }
-        }
+        if(rangeA.min && rangeB.max != 0) {} else break;
 
         if(insideRange(rangeA, rangeB) == 1) i++;
 
